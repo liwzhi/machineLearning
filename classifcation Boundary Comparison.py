@@ -113,7 +113,8 @@ def plot_datasets(clf_name, est=None):
 #%% generate the dataset
 #import PlotShow as Plot
 
-import numpy as np
+
+plt.close('all')
 from collections import OrderedDict
 from sklearn.preprocessing import StandardScaler
 from sklearn.datasets import make_moons, make_circles, make_classification,make_s_curve
@@ -143,9 +144,7 @@ import matplotlib.gridspec as gridspec
 plot_datasets([' '])
 
 
-fig = plt.figure()
 
-ax1 = fig.add_subplot(211)
 
 #%% GBM 
 #fig, axes = plt.subplots(1, 3, figsize=(10, 4))
@@ -158,7 +157,6 @@ plot_datasets(['GBM  ntress=50, max_depth=5'],clf)
 
 #%% Random forest
 
-fig = plt.figure()
 est = ensemble.RandomForestClassifier(n_estimators =10,max_depth=20)
 plot_datasets(['DRF ntrees=10, max_depth=20'],est) 
 
