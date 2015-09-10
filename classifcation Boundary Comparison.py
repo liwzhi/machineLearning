@@ -163,9 +163,9 @@ plot_datasets(['DRF ntrees=10, max_depth=20'],est)
 
 
 #%%  Logistici Regaression
-from sklearn.linear_model import LogisticRegression
-est = LogisticRegression()
-plot_datasets(['Logistic regression'],est)
+#from sklearn.linear_model import LogisticRegression
+#est = LogisticRegression()
+#plot_datasets(['Logistic regression'],est)
 
 
 #%% GLM -- SGD 
