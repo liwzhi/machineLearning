@@ -34,4 +34,27 @@ class Solution(object):
             return True
         else:
             return False
+    
+    def Queue(object):
+        def __init__(self):
+            self.stack=[]
+            
+        def push(self,x):
+            swap = []
+            while self.stack:
+                swap.append(self.stack.pop())
+            swap.append(x)
+            while swap:
+                self.stack.append(swap.pop())
+        
+        def pop(self):
+            self.stack.pop()
+        
+        def peek(self):
+            return self.stack[-1]
+        
+        def empty(self):
+            return len(self.stack)==0
+            
+        
         
