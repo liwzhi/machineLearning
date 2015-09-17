@@ -4,6 +4,11 @@ Created on Mon Sep 14 00:44:06 2015
 
 @author: weizhi
 """
+
+
+
+
+
 class Solution(object):
     def generateParenthesis(self,n):
         res = []
