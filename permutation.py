@@ -11,6 +11,8 @@ class Solution(object):
         used = [False]*len(num)
         self.helper(result,used,[],num)
         return result
+        
+        
     def helper(self,result,used,curr,num):
         if len(curr) == len(num):
             result.append(curr + [])
