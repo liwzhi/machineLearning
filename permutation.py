@@ -10,6 +10,7 @@ class Solution(object):
         result = []
         used = [False]*len(num)
         self.helper(result,used,[],num)
+        return result
     def helper(self,result,used,curr,num):
         if len(curr) == len(num):
             result.append(curr + [])
@@ -19,11 +20,13 @@ class Solution(object):
                 used[i]= True
                 curr.append(num[i])
                 self.helper(result,used,curr,num)
+                print used
                 curr.pop()
                 used[i] = False
+        
 # features
 # map reduce
 # explore the data sets, new clients, unique, deal scale the machine learing 
 # engineer
-            
-    
+aa = Solution()
+print aa.permute([23,4])
