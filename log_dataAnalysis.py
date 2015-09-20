@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 """
+Created on Sun Sep 20 11:17:41 2015
+
+@author: weizhi
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Sat Sep 19 17:47:27 2015
 
 @author: weizhi
@@ -7,6 +14,7 @@ Created on Sat Sep 19 17:47:27 2015
 
 #%% loading each files
 import glob, os
+import collections
 # https://docs.python.org/2/library/os.html
 def findFilePath(path):
     os.chdir(path)
@@ -41,12 +49,15 @@ def transfromTimeFormat(data,n):
 def generateOutputs(data,path,fileName):
     keys = [key for key in data.keys()]
     keys.reverse()
-    dataGroup = data.groupby(keys,ascending=True).groups
+    dataGroup = data.groupby(keys).groups
+    keysOuput = sorted(dataGroup.iterkeys())  # keep the keys sorted rather than hashing
     outputs = pd.DataFrame(columns = ['period','content_id','uid','count'])
-    for index in range(len(dataGroup)):
-        curr = list(dataGroup.keys()[index])   #.append(len(dataGroup.values()[index]))
-        curr.append(len(dataGroup.values()[index]))
-        outputs.loc[index] = curr
+    count = 0
+    for key in keysOuput:
+        curr = list(key)   # write to each columns to outputs.csv
+        curr.append(len(dataGroup[key])) # get the count of keys from groupby
+        outputs.loc[count] = curr
+        count +=1 
     savePath = path + '/' + 'Outputs'+'/'+'Output_'+fileName
     print savePath
     outputs.to_csv(savePath,index=False)
