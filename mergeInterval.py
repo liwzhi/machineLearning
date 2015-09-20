@@ -20,22 +20,37 @@ class Solution(object):
         if len(intervals)==0:
             return 
         result = []
-        pre = intervals.pop(0)
-        while(len(intervals)>1):
-            curr = intervals.pop()
-            if curr.start-pre.end<0 and curr!=pre:
-                curr.start = min(pre.start,curr.start)
-                print pre.start
-                curr.end = max(pre.end,curr.end)
-                intervals.append(curr)  #[1,4]
-                print [curr.start,curr.end]
-            result.append([curr.start,curr.end])
-            pre = curr #[1,4]
+        indexSort = [intervals[i].start for i in range(len(intervals))]
+        s = sorted(range(len(indexSort)),key=lambda k:indexSort[k])
+        intervalsNew = []
+        for index in s:
+            intervalsNew.append(intervals[index])
+           # print intervals[index].start
+          #  print intervals[index].end
+            
+        #pre = intervalsNew.pop(0
+        result = [intervalsNew[0]]
+        for i in range(1,len(intervals)):
+            prev = result[-1]
+            print result[-1].start
+            print result[-1].end
+            current = intervalsNew[i]
+           # print prev.end
+            if current.start<=prev.end:
+                prev.end = max(prev.end,current.end)
+                result[-1].end = prev.end
+            else:
+                result.append(current)
+        
+        
+
         return result
 a = Interval(1,4)
-print a.end
+#print a.end
 b = Interval(0,2)  # 0,4
 c = Interval(3,5)  #0 5
+d = Interval(6,9)
 data = [a,b,c]
 Obj = Solution()
-print Obj.merge([a,b,c])
+result =  Obj.merge([a,b,c,d])
+#print result[0].end
