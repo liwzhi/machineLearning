@@ -69,12 +69,15 @@ class logDataAnalysis(object):
         except OSError:
             pass
         return savePath
+    
+    def mergerResult(self):
+        
 
 #%% testing
 path = '/Users/weizhi/Desktop/everStringProject'
 filePaths = findFilePath(path)
 
-Obj = logDataAnalysis(path,3,filePaths[0])
+Obj = logDataAnalysis(path,2,filePaths[0])
 data = Obj.readCSV(filePaths[0])
 
 data.to_csv(filePaths[0],index=False)
