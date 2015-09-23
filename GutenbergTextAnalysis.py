@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Sep 21 23:50:52 2015
-
-@author: weizhi
-"""
-
-# -*- coding: utf-8 -*-
-"""
 Created on Mon Sep 21 14:18:31 2015
 
 @author: weizhi
@@ -31,8 +24,9 @@ def findFilePath(dataPath):
         pathFolder = dataPath + '/' + item
       #  print pathFolder
         nameFile = os.listdir(pathFolder)
-       # print nameFile
-        filePaths.append(pathFolder  + '/'+nameFile[0])
+        for item in nameFile:
+            if item.endswith('.rdf'):
+                filePaths.append(pathFolder  + '/'+item)
     return (filePaths,keys)
 
 rdfPath = '/Users/weizhi/Downloads/cache/epub'
@@ -44,15 +38,9 @@ dataFile,keys = findFilePath(rdfPath)
 import rdflib
 import datetime
 import urllib2
-
-class dataPath(object):
-   # def __ini__(self,publishTime=[],textContent=[],subject=[],predicate=[],obj=[]):
-#        self.time = publishTime
-#        self.textContent = textContent 
-#        self.subject = subject
-#        self.predicate = predicate
-#        self.obj = obj
-    
+import pandas as pd
+import pylab as pl
+class dataPath(object):    
     def graphParse(self,rdfPath):
         graph = rdflib.Graph()
         graph.parse(rdfPath)
@@ -83,8 +71,9 @@ class dataPath(object):
         """
         https://gist.github.com/andreasvc/b3b4189120d84dec8857
         """
-        endString =  key + '.txt'
+        endString =  '.txt'
         URL = []
+        data = []
         for item in subject:
             if item.endswith(endString):
                 URL.append(item)
@@ -92,11 +81,13 @@ class dataPath(object):
             try:
                 data = urllib2.urlopen(URL[0]).read()# read only 20 000 chars
                 data = data.split("\n") # then split it into lines
-                return data
+               # return data
             except:
                 pass
-           # return data
-        return URL
+        if len(data) !=0:
+            return data
+        else:
+            return URL
     def metaData(self,data):
       #  for line in data
         Dict = {}
@@ -114,24 +105,97 @@ class dataPath(object):
                 break
             
         return Dict
+
+
             
         
 obj = dataPath()
 DictOutput = []
-for index in range(10):
+Dict = {}
+
+for index in range(100):
     result = obj.graphParse(dataFile[index])
     timePub = obj.publishTimeGet(result[0])
     rawText = obj.readURL(result[1],keys[index])
-    Dict = obj.metaData(rawText)
+   # Dict = obj.metaData(rawText)
    # Dict['key'] = keys[index]
-    print Dict 
-    DictOutput.append(Dict)
-#print result[1]
-#%%print timePub
+ #   print Dict 0000
+#    DictOutput[keys[index]] = timePub
+    DictOutput.append(timePub)
+    
+
+#%%
+day = {}
+month = {}
+year = {}
+
+for item in DictOutput:
+    try:
+        currDay = item[0].isoformat()
+        currMonth = item[0].isoformat()[:-3]
+        currYear = item[0].isoformat()[:-6]
+        if currDay in day.keys():
+            day[currDay] +=1
+        else:
+            day[currDay] = 1
+        if currMonth in month.keys():
+            month[currMonth]+=1
+        else:
+            month[currMonth] =1
+        if currYear in year.keys():
+            year[currYear] +=1
+        else:
+            year[currYear] =1
+    except:
+        pass
+
+#%% Plot the figures
+
+
+def histPlot(day,name):
+    day = pd.DataFrame(day.items(),columns = ['Date','Count']).sort(['Date'])
+    #print day
+    day.plot(x='Date',y='Count',legend=False)
+    pl.title(name + ' -- publish books')
+histPlot(day,'Day')   
+histPlot(year,'Year')
+histPlot(month,'Month')
+
+
+#%% using the 
 import nltk
-textBooks = nltk.corpus.gutenberg.fileids()
+from numpy import random
+from gutenberg.acquire import load_etext
+from gutenberg.cleanup import strip_headers
 
 
+bookNumber = set(random.randint(10,50024,size=2000))
+#f.write(foo.encode('utf8'))
+
+metaInfo = []
+
+for item in bookNumber:
+   # print item
+    try: 
+       # print item
+        # loading the raw txt 
+        data = load_etext(item).split("\n")
+        
+        # save the txt data path
+        filePath = rdfPath + '/' +str(item) + '/' +  str(item) + '.txt'
+        f = open(filePath,'w')
+        f.write(data.encode('utf8'))
+        f.close()
+        # get the meta data 
+        Dict = obj.metaData(data)
+        metaInfo.append((Dict,filePath))
+        print len(metaInfo)
+    except:
+        continue
+#textBooks = nltk.corpus.gutenberg.fileids()
+
+#text = strip_headers(load_etext(2701)).strip()
+#assert text.startswith('MOBY DICK; OR THE WHALE\n\nBy Herman Melville')
 
 #import urllib2
 
