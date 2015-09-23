@@ -192,48 +192,14 @@ for item in bookNumber:
         print len(metaInfo)
     except:
         continue
-#textBooks = nltk.corpus.gutenberg.fileids()
-
-#text = strip_headers(load_etext(2701)).strip()
-#assert text.startswith('MOBY DICK; OR THE WHALE\n\nBy Herman Melville')
-
-#import urllib2
-
-#data = urllib2.urlopen(URL[0]).read()# read only 20 000 chars
-#data = data.split("\n") # then split it into lines
-
-#result = obj.graphParse(dataFile[0])        
-
-#%%
-
-    
-#%%
-#filename = 'cache/epub/78/pg78.rdf'
-#from lxml import etree
-#rdf = open(raw_data).read()
-#tree = etree.fromstring(rdf)
-#resource_tag = '{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource'
-#hasFormat_tag = './/{http://purl.org/dc/terms/}hasFormat'
-#resources = [el.attrib[resource_tag] for el in tree.findall(hasFormat_tag)]
-#urls = [url for url in resources if url.endswith('htm')]
-##// urls[0] is 'http://www.gutenberg.org/files/78/78-h/78-h.htm'
-#
-
-
-
-
-#%%
-
-#http://stackoverflow.com/questions/19588952/python-reading-rdf-files-scraping-gutenberg-books
-
-
-#print ', '.join(output)
-
-#from lxml import etree
-#rdf = open(raw_data).read()
-#tree = etree.fromstring(rdf)
-#resource_tag = '{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource'
-#hasFormat_tag = './/{http://purl.org/dc/terms/}hasFormat'
-#resources = [el.attrib[resource_tag] for el in tree.findall(hasFormat_tag)]
-#urls = [url for url in resources if url.endswith('htm')]
-## urls[0] is 'http://www.gutenberg.org/files/78/78-h/78-h.htm'
+#%%do the data mining to these txt, author, title, release time, etc, need time to work on this part
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
