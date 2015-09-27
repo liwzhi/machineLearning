@@ -18,13 +18,14 @@ class Solution(object):
         if len(nums) ==len(stk):
           #  print stk
            # print stk
-            result.append(stk[:])
+            if stk[:] not in result:
+                result.append(stk[:])
           #  print result
             return result
         for i in range(len(nums)):
             if i>0 and nums[i-1] == nums[i]:
-                print nums[i]
-                continue
+               # print nums[i]
+                pass
             if not used[i]:
                 used[i] = True
                 stk.append(nums[i])
@@ -40,3 +41,5 @@ class Solution(object):
 obj = Solution()
 result = obj.permuteUnique([1,1,3,2])
 print result
+
+#print set(result)
