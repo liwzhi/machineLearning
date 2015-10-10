@@ -27,17 +27,17 @@ test='/Users/weizhi/Downloads/kaggle competion//test.csv'#'vali_100.tsv'
 submission = '/Users/weizhi/Downloads/kaggle competion/sample_submission1.csv'  # path of to be outputted submission file
 
 # B, model
-alpha = .005  # learning rate
+alpha = .05  # learning rate
 beta = 1.   # smoothing parameter for adaptive learning rate
-L1 = 0.     # L1 regularization, larger value means more regularized
-L2 = 1.     # L2 regularization, larger value means more regularized
+L1 = 1     # L1 regularization, larger value means more regularized
+L2 = 0     # L2 regularization, larger value means more regularized
 
 # C, feature/hash trick
-D = 2 ** 16             # number of weights to use
-interaction = False     # whether to enable poly2 feature interactions
+D = 2 ** 8             # number of weights to use
+interaction = True     # whether to enable poly2 feature interactions
 
 # D, training/validation
-epoch = 1       # learn training data for N passes
+epoch = 10       # learn training data for N passes
 holdafter = 9   # data after date N (exclusive) are used as validation
 holdout = None  # use every N training instance for holdout validation
 
