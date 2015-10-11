@@ -32,7 +32,7 @@ class Solution(object):
                # print mid
                 for i in range(mid-1,left-1,-1):
                   #  print mid-1
-                   # print left-1
+                  # print left-1 
                     while(i>=0 and target == nums[i]):
                         count +=1
                         i-=1
