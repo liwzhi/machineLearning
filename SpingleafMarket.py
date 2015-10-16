@@ -9,7 +9,7 @@ import pandas as pd
 
 train = pd.read_csv('/Users/weizhi/Downloads/kaggle competion/train.csv')
 
-#sample_submit = pd.read_csv('/Users/weizhi/Downloads/kaggle competion/sample_submission.csv')
+sample_submit = pd.read_csv('/Users/weizhi/Downloads/kaggle competion/sample_submission.csv')
 count =0
 count1 = 0
 X = train.iloc[:,:-1]
@@ -19,28 +19,129 @@ stringFeature = []
 train = []
 for types in X.dtypes:
     if types == 'int64' or types== 'float':
-        count+=1
         numberFeature.append(count)
     if types =='object':
-        count1+=1
-        stringFeature.append(count1)
+        stringFeature.append(count)
+    count +=1
 print count
-print count1
+
 
 numberFeatures =X.iloc[:,numberFeature]
 #X = []
 stringFeature = X.iloc[:,stringFeature]
 X = []
-
-#%% Adaboosting classifcations trees
-
-from sklearn.ensemble import AdaBoostClassifier 
-
-bdt = AdaBoostClassifier()
-
-bdt.fit(numberFeatures,y)
+#%%
+import pylab as plt
+plt.figure()
+plt.plot(numberFeatures.iloc[:,4])
 
 
+def plotCorr(data,number):
+    subData = data.iloc[number*1000:(number+1)*1000,:]
+    corrY = subData.corr()
+    plt.figure()
+    plt.imshow(corrY)
+
+plotCorr(numberFeatures,1)
+plotCorr(numberFeatures,2)
+
+#%%
+from sklearn.feature_extraction import FeatureHasher
+hasher = FeatureHasher(input_type='string',dtype='float')
+strFeature = hasher.fit_transform(stringFeature)
+
+#%% normalizetoin
+numberFeatures = numberFeatures.fillna(0)
+
+from sklearn import preprocessing
+scaler = preprocessing.StandardScaler().fit(numberFeatures.iloc[:,1:])
+X_scaled = scaler.transform(numberFeatures.iloc[:,1:])
+import numpy as np
+#a = numpy.asarray([ [1,2,3], [4,5,6], [7,8,9] ])
+#numpy.savetxt("/Users/weizhi/Downloads/kaggle competion/scared.csv", X_scaled, delimiter=",")
+
+where_are_NaNs = np.isnan(X_scaled)
+X_scaled[where_are_NaNs] = 0
+#data = pd.read_csv("/Users/weizhi/Downloads/kaggle competion/scared.csv")
+numberFeatures = None
+import random 
+index = random.sample(range(X_scaled.shape[0]),  10000)
+
+trainSample = X_scaled[index,:]
+target = y.iloc[index]
+
+
+
+#%%
+
+
+from sklearn.ensemble import ExtraTreesClassifier
+clf1 = ExtraTreesClassifier(n_estimators = 500, max_features = 'sqrt',max_depth=4,min_samples_split=4,random_state=369)
+clf1.fit(trainSample, target)
+importances = clf1.feature_importances_
+indices = np.argsort(importances)[::-1]
+
+#%% train SVM 
+
+from sklearn.grid_search import GridSearchCV
+from sklearn.svm import SVC
+tuned_parameters = [{'kernel': ['rbf'], 'gamma': [1e-3, 1e-4,1e-5],
+                     'C': [ 10, 100, 1000]}]
+
+#clf = GridSearchCV(SVC(C=1), tuned_parameters)
+clf = SVC(gamma = 0.01,random_state=368,C=10,probability=True)
+clf.fit(trainSample[:,indices[:100]], target)
+
+#%% xgboost
+
+import xgboost as xg
+
+
+param = {"objective" : "multi:softprob",
+"eval_metric" : "mlogloss",
+"num_class" : 9,
+"gamma" : 0,
+"nthread" : 8,
+"eta" : 0.05,
+"max_depth" : 12,
+"min_child_weight" : 4,
+"subsample" : .9,
+"colsample_bytree" : .8}
+
+xgb_model = xg.XGBClassifier(learning_rate=0.1, n_estimators=100, silent=True, objective="multi:softprob",
+                 nthread=-1, max_delta_step=0, subsample=.9, colsample_bytree=.8,
+                 base_score=0.5, seed=0)
+
+clf = GridSearchCV(xgb_model,
+                   {'max_depth': [6,8,10,12,14],
+                    'n_estimators': [100,200,250],'gamma':[0.1,0,1],'min_child_weight':[4,6,8]}, verbose=1,cv=10)
+
+clf.fit(X.values,yy.values)
+
+clf.best_estimator_
+
+#%% reading the test data
+test = pd.read_csv('/Users/weizhi/Downloads/kaggle competion/test.csv')
+test = test.fillna(0)
+testData = test.iloc[:,numberFeature]
+test = None
+Test_scaled = scaler.transform(testData.iloc[:,1:])
+where_are_NaNs = np.isnan(Test_scaled)
+Test_scaled[where_are_NaNs] = 0
+testData =None
+
+#%% result
+result = clf1.predict_proba(Test_scaled)
+
+result_svm = clf.predict_proba(Test_scaled[:,indices[:100]])
+#Test_scaled = None
+
+#%% from kaggle
+data = pd.read_csv('/Users/weizhi/Downloads/xgb3.csv')
+
+sample_submit['target'] = 0.1*result[:,1] + 0.65*data['target'] + 0.3*result_svm[:,1]
+#sample_submit['target'] = result_svm[:,1]
+sample_submit.to_csv('/Users/weizhi/Downloads/kaggle competion/sample_submission_SVM_RF_SVM.csv',index=False)
 
 
 
@@ -48,69 +149,3 @@ bdt.fit(numberFeatures,y)
 
 
 
-
-
-
-
-
-#%% Deep Learning
-#from lasagne.layers import DenseLayer
-#from lasagne.layers import InputLayer
-#from lasagne.layers import DropoutLayer
-#from lasagne.nonlinearities import softmax
-#from lasagne.updates import nesterov_momentum
-#from nolearn.lasagne import NeuralNet
-#
-#from matplotlib.colors import ListedColormap
-#from sklearn.metrics import roc_curve, auc
-#import numpy as np
-#from matplotlib import pyplot as plt
-#
-#from sklearn.preprocessing import LabelEncoder
-#from scipy import interp
-#
-#encoder = LabelEncoder()
-#    
-#layers0 = [('input', InputLayer),
-#           ('dense0', DenseLayer),
-#          # ('dropout', DropoutLayer),
-#           ('dense1', DenseLayer),
-#           ('dense2',DenseLayer),
-#           ('output', DenseLayer)]
-#
-#net0 = NeuralNet(layers=layers0,
-#                 
-#                 input_shape=(None, 2),
-#                 dense0_num_units=50,
-#               #  dropout_p=0.5,
-#                 dense1_num_units=50,
-#                 dense2_num_units=50,
-#                 output_num_units=2,
-#                 output_nonlinearity=softmax,
-#                 
-#                 update=nesterov_momentum,
-#                 update_learning_rate=0.01,
-#                 update_momentum=0.9,
-#                 
-#                 eval_size=0.2,
-#                 verbose=1,
-#                 max_epochs=1000)
-#from sklearn.preprocessing import LabelEncoder
-#encoder = LabelEncoder()
-#y_train = encoder.fit_transform(y).astype(np.int32)
-#y =[]
-#net0.fit(numberFeatures,y_train) 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
