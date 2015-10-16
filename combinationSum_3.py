@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Sep 20 23:25:26 2015
+Created on Fri Oct 16 00:01:02 2015
 
 @author: weizhi
 """
@@ -12,20 +12,20 @@ class Solution(object):
         :type n: int
         :rtype: List[List[int]]
         """
+        if n==0:
+            return[]
         result = []
-        if 9*k<n:
-            return result
-        self.helper(n,result,0,[],n,k)
+        candidates = range(1,10)
+        result = self.helper(candidates,result,[],k,n,0)
         return result
-    def helper(self,n,result,start,stk,target,k):
-       # if 9*k<n:
-        #    return 
-        if target<0:
-            return 
-        if target==0 and k ==0:
+    def helper(self,candidates,result,stk,k,n,start):
+        if len(stk)==k and sum(stk[:])==n:
             result.append(stk[:])
-        for item in range(start,9):
-            self.helper(n,result,item+1,stk+[item+1],target-item-1,k-1)
-Obj = Solution()
-result = Obj.combinationSum3(2,9)
-print result
+            return result
+        for i in range(start,len(candidates)):
+            item = candidates[i]
+            stk.append(item)
+            if len(stk)<=k and sum(stk[:])<=n:
+                self.helper(candidates,result,stk,k,n,i+1)
+            stk.pop()
+        return result
