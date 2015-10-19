@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 """
+Created on Sat Oct 17 00:47:23 2015
+
+@author: weizhi
+"""
+# -*- coding: utf-8 -*-
+"""
 Created on Tue Oct  6 21:40:15 2015
 
 @author: weizhi
@@ -15,19 +21,20 @@ count1 = 0
 X = train.iloc[:,:-1]
 y = train.iloc[:,-1]
 numberFeature = []
-stringFeature1 = []
+stringFeature = []
 train = []
 for types in X.dtypes:
     if types == 'int64' or types== 'float':
         numberFeature.append(count)
     if types =='object':
-        stringFeature1.append(count)
+        stringFeature.append(count)
     count +=1
+print count
 
 
 numberFeatures =X.iloc[:,numberFeature]
 #X = []
-stringFeature = X.iloc[:,stringFeature1]
+stringFeature = X.iloc[:,stringFeature]
 X = []
 #%%
 import pylab as plt
@@ -72,8 +79,7 @@ target = y.iloc[index]
 
 strSample = strFeature[:,index]
 
-X = trainSample
-#X= np.concatenate((trainSample,strSample.T),axis=1)
+X= np.concatenate((trainSample,strSample.T),axis=1)
 trainSample = None
 
 
@@ -108,7 +114,7 @@ fpr = dict()
 tpr = dict()
 roc_auc = dict()
 score= roc_auc_score(y_test, y_score[:,1])
-print ("the random forest score is %f" %score)
+print "the random forest score is %f" %score
 
 
 
@@ -143,7 +149,7 @@ clf.fit(X_train[:,indices[:count]],y_train)
 
 y_score = clf.predict_proba(X_test[:,indices[:count]])
 score= roc_auc_score(y_test, y_score[:,1])
-print ("the random forest score is %f" %score)
+print "the random forest score is %f" %score
 
 #clf.fit(trainSample[:,indices[:100]], target)
 
@@ -231,7 +237,7 @@ xgb1.fit(X_train[:,indices[:count]],y_train)
 y_score = xgb1.predict_proba(X_test[:,indices[:count]])
 
 score= roc_auc_score(y_test, y_score[:,1])
-print ("the XGB forest score is %f" %score)
+print "the XGB forest score is %f" %score
 from sklearn.decomposition import PCA
 
 from sklearn.decomposition import PCA, FastICA
@@ -253,7 +259,7 @@ xgb1.fit(XTrain,y_train)
 y_score = xgb1.predict_proba(XTest)
 
 score= roc_auc_score(y_test, y_score[:,1])
-print ("the XGB forest score is %f" %score)
+print "the XGB forest score is %f" %score
 
 
 
@@ -262,9 +268,9 @@ print ("the XGB forest score is %f" %score)
 
 
 
-#from sklearn.manifold import TSNE
-#model = TSNE(n_components=2, random_state=0)
-#model.fit_transform(X_train[:,indices[:count]]) 
+from sklearn.manifold import TSNE
+model = TSNE(n_components=2, random_state=0)
+model.fit_transform(X_train[:,indices[:count]]) 
 
 #%% KNN
 from sklearn.neighbors import KNeighborsClassifier
@@ -275,49 +281,16 @@ neigh.fit(X_train[:,indices[:count]],y_train)
 y_score = neigh.predict_proba(X_test[:,indices[:count]])
 
 score= roc_auc_score(y_test, y_score[:,1])
-print ("the XGB forest score is %f" %score)
+print "the XGB forest score is %f" %score
 #%% reading the test data
-
-# two steps, one normal and log and pca
 test = pd.read_csv('/Users/weizhi/Downloads/kaggle competion/test.csv')
 test = test.fillna(0)
 testData = test.iloc[:,numberFeature]
-
-stringFeatureNew = test.iloc[:,stringFeature1]
-
-
-#%% value count and transform
-
-
-
-#%%
-
-#from sklearn.feature_extraction.text import CountVectorizer
-#count= CountVectorizer()
-#a = count.fit_transform(stringFeatureNew.iloc[:,1])
-#
-#from sklearn.feature_extraction import FeatureHasher
-#hasher1 = FeatureHasher(input_type='string',dtype='float')
-#strFeatureNew = hasher1.fit_transform(stringFeatureNew.T).toarray()
-
-
-
-
-
 test = None
-
-
 Test_scaled = scaler.transform(testData.iloc[:,1:])
 where_are_NaNs = np.isnan(Test_scaled)
 Test_scaled[where_are_NaNs] = 0
-Test_scaled = np.log(1+Test_scaled)
 testData =None
-where_are_NaNs = np.isnan(Test_scaled)
-Test_scaled[where_are_NaNs] = 0
-
-#Test_scaled= np.concatenate((Test_scaled,strFeature),axis=1)
-
-
 
 pcaTest = pca.transform(Test_scaled)
 
@@ -339,5 +312,5 @@ data = pd.read_csv('/Users/weizhi/Downloads/xgb3.csv')
 sample_submit['target']  = 1*result_gbm + 0.5*data['target'] + 0.5*result[:,1]
 
 #sample_submit['target'] = result_svm[:,1]
-sample_submit.to_csv('/Users/weizhi/Downloads/kaggle competion/sample_submission_gbm_PCA_400.csv',index=False)
+sample_submit.to_csv('/Users/weizhi/Downloads/kaggle competion/sample_submission_gbm.csv',index=False)
 
