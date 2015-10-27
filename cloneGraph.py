@@ -25,7 +25,7 @@ class Solution(object):
                 root = UndirectedGraphNode(item.label)
                 if item==node:
                     result = root
-                print root.label
+             #   print root.label
                 labs = []
                 for neighbor in item.neighbors:
                     nextLevel.append(neighbor)
