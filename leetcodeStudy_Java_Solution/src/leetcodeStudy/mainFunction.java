@@ -61,6 +61,7 @@ public class mainFunction {
 		System.out.println(objPath2.sumNumbers(n1));
 		System.out.println("word break");
 		
+	
 		
 		
 		
