@@ -16,6 +16,9 @@ public class LCA_BST {
 		else {
 			return root;}
 	}
+    
+    
+    
     public TreeNode LCA(TreeNode root,TreeNode p, TreeNode q){
     	HashMap<TreeNode,TreeNode> Dict = new HashMap<TreeNode,TreeNode>();
     	Stack<TreeNode> stk = new Stack<TreeNode>();
