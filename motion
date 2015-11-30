@@ -1,0 +1,116 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Nov 19 15:35:11 2015
+
+@author: weizhi
+"""
+import site; site.addsitedir("/usr/local/lib/python2.7/site-packages")
+import numpy as np
+from numpy import random
+import cv2
+import pylab as plt
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Sep 19 17:47:27 2015
+
+@author: weizhi
+"""
+
+#%% loading each files
+import glob, os
+import collections
+import pandas as pd
+
+# https://docs.python.org/2/library/os.html
+def findFilePath(path):
+    os.chdir(path)
+    filePaths = []
+    for file in glob.glob("*.tiff"):
+        filePaths.append(file)
+    return filePaths
+
+#%% hours and generate the outputs
+# deal with each csv file 
+row = 1044
+col = 1408
+def readCSV(path, filePaths):
+    data = np.zeros([1044,1408,400])
+    for i in range(7,407):
+        filePath = path + '/' + filePaths[i]
+        
+        data[:,:,i-7] =cv2.imread(filePath,-1)
+    return data
+
+
+#%% testing
+path = '/Users/weizhi/Downloads/2015-06-11_10.22.56 2/'
+filePaths = findFilePath(path)
+data = readCSV(path , filePaths)
+
+
+
+kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(3,3))
+fgbg = cv2.BackgroundSubtractorMOG2()
+
+#%% write it to vedio 
+fourcc = cv2.cv.CV_FOURCC('M','J','P','G')
+out = cv2.VideoWriter('/Users/weizhi/Downloads/2015-06-11_10.22.56 2//output.avi',fourcc, 30.0, (row,col))
+
+diff = np.zeros(400)
+count = 0
+while(count<400):
+  #  ret, frame = cap.read()
+    frame = data[:,:,count]
+
+    fgmask = fgbg.apply(frame)
+    fgmask = cv2.morphologyEx(fgmask, cv2.MORPH_OPEN, kernel)
+    diff[count] = sum(sum(fgmask))
+    count+=1
+   # out.write(fgmask)
+    cv2.imshow('frame',fgmask)
+    k = cv2.waitKey(30) & 0xff
+    if k == 27:
+        break
+
+cv2.destroyAllWindows()
+plt.figure()
+plt.plot(diff[1:])
+
+imgTest = np.uint8(data[:,:,1])
+
+surf = cv2.SURF(400)
+#%%
+import matplotlib.cm as cm
+# Find keypoints and descriptors directly
+kp, des = surf.detectAndCompute(imgTest,None)
+
+sift = cv2.SIFT()
+kp, des = sift.detectAndCompute(data[:,:,1],None)
+
+
+img2 = cv2.drawKeypoints(imgTest,kp,None,(255,0,0),4)
+
+plt.imshow(img2[:,:,1],cmap = plt.get_cmap('gray'))
+plt.show()
+plt.figure()
+plt.imshow(data[:,:,1],cmap = plt.get_cmap('gray'))
+plt.show()
+
+
+image = cv2.imread("test_image.jpg")
+gray = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+
+plt.figure()
+plt.imshow(img2,cmap = plt.get_cmap('gray'))
+plt.show()
+
+sift = cv2.xfeatures2d.SIFT_create()
+(kps, descs) = sift.detectAndCompute(data[:,:,1], None)
+
+#%%
+
+ 
+
+
+
+
